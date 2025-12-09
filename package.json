@@ -9,9 +9,15 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@coinbase/x402": "^0.7.3",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
     "next": "16.0.8",
     "react": "19.2.1",
-    "react-dom": "19.2.1"
+    "react-dom": "19.2.1",
+    "tsx": "^4.21.0",
+    "x402": "^0.7.3",
+    "x402-next": "^0.7.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

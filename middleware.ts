@@ -1,22 +1,42 @@
-import { facilitator } from "@coinbase/x402";
 import { paymentMiddleware } from "x402-next";
+import { NextRequest, NextResponse } from "next/server";
 
-export const middleware = paymentMiddleware(
-  "0x0b00a75637601e0F1B98d7B79b28A77c1f64E16D",
-  {
-    "/premium": {
-      price: "$0.01",
-      network: "base",
-      config: {
-        description: "Premium page access",
+export async function middleware(request: NextRequest) {
+  // Obtener los valores dinámicos de los parámetros de búsqueda (Search Params)
+  const searchParams = request.nextUrl.searchParams;
+
+  const price = searchParams.get("price");
+  const wallet = searchParams.get("wallet");
+  const description = searchParams.get("desc");
+
+  // Validar que tenemos los datos necesarios
+  if (!price || !wallet || !description) {
+    console.log("Datos de pago incompletos. Redirigiendo a /pago-config");
+    return NextResponse.redirect(new URL("/pago-config", request.url));
+  }
+
+  // Tipado de Seguridad: El tipo 'wallet' debe ser una dirección EVM.
+  const merchantWallet = wallet as `0x${string}`;
+
+  // Devolver la función paymentMiddleware configurada con los valores dinámicos
+  return paymentMiddleware(
+    merchantWallet,
+    {
+      [request.nextUrl.pathname]: {
+        price: price,
+        network: "base",
+        config: {
+          description: description,
+        },
       },
     },
-  },
-  {
-    url: "https://facilitator.ultravioletadao.xyz",
-  }
-);
+    {
+      url: "https://facilitator.ultravioletadao.xyz",
+    }
+  )(request);
+}
 
 export const config = {
-  matcher: ["/premium/:path*"],
+  // Solo se activa cuando se accede a /premium/checkout, por ejemplo
+  matcher: ["/premium/checkout"],
 };
